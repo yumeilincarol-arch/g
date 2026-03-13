@@ -1,0 +1,1088 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="theme-color" content="#000000"/>
+    <meta name="description" content="大话骰游戏 - Liar's Dice"/>
+    <title>大话骰</title>
+    <style>
+        /* 全局样式 */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=VT323&display=swap');
+        
+        :root {
+            --primary-color: #ff8000;
+            --secondary-color: #0066cc;
+            --accent-color: #ffcc00;
+            --text-color: #333;
+            --light-color: #fff;
+            --dark-color: #222;
+            --success-color: #4CAF50;
+            --danger-color: #f44336;
+            --background-gradient: linear-gradient(135deg, #ff8000 0%, #ffaa00 100%);
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --border-radius: 20px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        #fc2_footer{display:none}
+        body {
+            background: var(--background-gradient);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* 游戏容器 */
+        .game-container {
+            max-width: 420px;
+            width: 100%;
+            background: var(--container-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 2px solid var(--secondary-color);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 头部样式 */
+        .game-header {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-header hr {
+            border: none;
+            height: 3px;
+            background: var(--accent-color);
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 3px;
+        }
+        
+        /* 玩家信息 */
+        .player-info {
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 102, 204, 0.1);
+            border-bottom: 2px solid rgba(0, 102, 204, 0.2);
+        }
+        
+        .player-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+           
+        }
+        
+        .game-status {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        /* 骰子区域 */
+        .dice-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .dice-title {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        button[hidden]{display:none}
+        .dice {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .dice:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .joker-note {
+            font-size: 0.9rem;
+            color: var(--danger-color);
+            text-align: center;
+            padding: 8px;
+            background: rgba(244, 67, 54, 0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        /* 控制区域 */
+        .controls-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .timer-display {
+            font-size: 1.4rem;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .bid-info {
+            background: rgba(0, 102, 204, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 35px;
+        }
+        
+        .bid-info p {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        /* 输入区域 */
+        .input-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .input-group label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+         .number-input::placeholder {font-size:1rem;
+
+         }
+        .number-input {
+            width: 120px;
+            height: 45px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .number-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 128, 0, 0.2);
+        }
+        
+        /* 按钮样式 */
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 120px;
+        display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0044aa, var(--secondary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #666, #888);
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #888, #666);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #45a049);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #d32f2f);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-icon {
+            font-size: 1.2rem;
+        }
+        
+        /* 提示信息 */
+        .hint-section {
+            padding: 15px;
+            background: rgba(255, 204, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .dice-title > img {
+            width:1.1rem;
+            height:1.1rem
+        }
+        .hint-text {
+            font-size: 1rem;
+            color: #d48806;
+            line-height: 1.5;
+        }
+        
+        /* 历史记录弹窗 */
+        dialog {
+            margin: 0 auto;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0;
+            max-width: 300px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+        }
+        
+        .dialog-header {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        div[hidden] {display:none} 
+        .dialog-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .dialog-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .record-list {
+            list-style: none;
+        }
+        
+        .record-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            font-size: 1.1rem;
+        }
+        
+        .record-item b {
+            color: var(--secondary-color);
+        }
+        
+        .dialog-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .game-container {
+                max-width: 100%;
+            }
+            
+            .game-header h1 {
+                font-size: 2rem;
+            }
+            
+            .dice {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .input-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                min-width: 110px;
+            }
+        }
+        
+        /* 动画效果 */
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* 骰子点数的颜色标记 */
+        .dice-value-1 { border: 3px solid #4CAF50; }
+        .dice-value-2 { border: 3px solid #2196F3; }
+        .dice-value-3 { border: 3px solid #9C27B0; }
+        .dice-value-4 { border: 3px solid #FF9800; }
+        .dice-value-5 { border: 3px solid #F44336; }
+        .dice-value-6 { border: 3px solid #009688; }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 102, 204, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主游戏容器 -->
+    <div class="game-container">
+        <!-- 游戏头部 -->
+        <div class="game-header">
+            <h1>大話骰</h1>
+            <hr>
+        </div>
+        
+        <!-- 玩家信息 -->
+        <div class="player-info">
+            <div class="player-name" id="nam"></div>
+        </div>
+        
+        <!-- 骰子显示区域 -->
+        <div class="dice-section"  id="diceDisplay" hidden>
+            <div class="dice-title"><span id="以下"></span><select id="se" style="font-size:22px" hidden></select><span id="以下为"></span></div>
+            <div class="dice-container">
+                <img id="d0" alt="骰子1">
+                <img id="d1"  alt="骰子2">
+                <img id="d2"  alt="骰子3">
+                <img id="d3"  alt="骰子4">
+                <img id="d4"    alt="骰子5">
+            </div>
+<div class="dice-title" id="o" hidden></div>
+            <div class="joker-note" id="joker" hidden>
+                注意事项：1點代表任意骰子點數
+            </div>
+        </div>
+        
+        <!-- 控制区域 -->
+        <div class="controls-section">
+            <!-- 当前出价显示 -->
+            <div class="bid-info" id="r" hidden></div>
+            
+            <!-- 计时器 -->
+            <div class="timer-display" id="g"></div>
+            
+            <!-- 输入区域 -->
+            <div class="input-section" id="inputArea" hidden>
+                <div class="input-group">
+                    <label for="x">数量:</label>
+                    <input type="number" id="x" class="number-input" min="1" max="50">
+                </div>
+                <div class="input-group">
+                    <span id="c"></span>
+                    <label for="y">点数:</label>
+                    <input type="number" id="y" class="number-input" min="1" max="6">
+                </div>
+            </div>
+            
+            <!-- 按钮区域 -->
+        <div class="buttons-container">
+                <button id="rolldice" class="btn btn-primary pulse" hidden=""><span class="btn-icon">🎲</span>開始遊戲</button>
+                <button id="createButton1" class="btn btn-success" hidden>
+                    <span class="btn-icon">✓</span><span id="ok"></span>
+                </button>
+                <button id="createButton2" class="btn btn-danger" hidden="">
+                    <span class="btn-icon">✗</span>否
+                </button>
+            </div>
+            
+            <!-- 提示信息 -->
+            <div class="hint-section" hidden>
+                <div class="hint-text" id="hint"></div>
+            </div>
+            
+            <!-- 查看记录链接 -->
+            <div style="text-align: center; margin-top: 15px;">
+                <a href='javascript:document.getElementById("historyDialog").showModal()' 
+                   id="查看" 
+                   hidden
+                   style="color: var(--secondary-color); text-decoration: none; font-weight: 600;">
+                    📜 查看完整记录
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 历史记录弹窗 -->
+    <dialog id="historyDialog">
+        <div class="dialog-header">
+            <h2 id="f">游戏记录</h2>
+        </div>
+        <div class="dialog-content">
+            <ul id="record" class="record-list"></ul>
+        </div>
+        <div class="dialog-footer">
+            <button id="close" class="btn btn-primary" style='margin:0 auto'>Close</button>
+        </div>
+    </dialog>
+    
+    <!-- 音频元素 -->
+    <audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/202510181719284ea.mp3" id="loss"></audio>
+    <audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/202510181720318f2.mp3" id="win"></audio>
+
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/1.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzEubWlkLm1wMyIsImlhdCI6MTc3MTAwMTIwNywiZXhwIjoxODAyNTM3MjA3fQ.c5xKsbZyNEYElw2tYYkn9jURZedg_Z864rQgSA4eSkI" id="e1"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/2.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzIubWlkLm1wMyIsImlhdCI6MTc3MTAwMTIzMSwiZXhwIjoxODAyNTM3MjMxfQ.pqxRgQusIuTGif7OoSb4gd5hAQ99KpAf93ui-JLLM3A" id="e2"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/3.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzMubWlkLm1wMyIsImlhdCI6MTc3MTAwMTI0NSwiZXhwIjoxODAyNTM3MjQ1fQ.1iVN6KVl83PnImsLAUGApc0ZE1fk4-jipWQ_2LMaoLI" id="e3"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/4.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzQubWlkLm1wMyIsImlhdCI6MTc3MTAwMTI1OCwiZXhwIjoxODAyNTM3MjU4fQ.paHv24TfPM3umn7YRFjs-WHqF6jkIb0itG3OwjLvEPQ" id="e4"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/5.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzUubWlkLm1wMyIsImlhdCI6MTc3MTAwMTI2NiwiZXhwIjoxODAyNTM3MjY2fQ.xVPrNJTEjw8WjR7bfInw8QfwsD5nvnx-qjDkKE7waA8" id="e5"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/6.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzYubWlkLm1wMyIsImlhdCI6MTc3MTAwMTI3NywiZXhwIjoxODAyNTM3Mjc3fQ.V5n6J9YhY89RVS2VAybT3e5o-j42F6xMqWXsJkowNbo" id="e6"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/7.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzcubWlkLm1wMyIsImlhdCI6MTc3MTAwMTI5MSwiZXhwIjoxODAyNTM3MjkxfQ.RZc3ney-UJo0xpajVJD8Acz8lQt98r0yjpGTf03UOec" id="e7"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/8.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzgubWlkLm1wMyIsImlhdCI6MTc3MTAwMTI5NSwiZXhwIjoxODAyNTM3Mjk1fQ.zrZBhhMg09UeAajq8ejbDLuiT7klk3Rjx_-0K4LVIc4" id="e8"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/9.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzkubWlkLm1wMyIsImlhdCI6MTc3MTAwMTI5OCwiZXhwIjoxODAyNTM3Mjk4fQ.kNeU2hacO3IUKS0iUw17CUCdQNBICj3howmxgP_Z35Y" id="e9"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/10.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzEwLm1pZC5tcDMiLCJpYXQiOjE3NzEwMDEzMDAsImV4cCI6MTgwMjUzNzMwMH0.p4UqVh2udLddkXMrB9Mi8PTZY86iWbJn4SDe4ZnZeek" id="e10"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/11.mid%20(1).mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzExLm1pZCAoMSkubXAzIiwiaWF0IjoxNzcxMDAxNTQ1LCJleHAiOjE4MDI1Mzc1NDV9.wRq99LYXu6gP29DloxaioMr00rSyJyexnjPftVd1a8E" id="e11"></audio>
+    <audio src="https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/12.mid.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzEyLm1pZC5tcDMiLCJpYXQiOjE3NzEwMDE2MDIsImV4cCI6MTgwMjUzNzYwMn0.RdYkIZe9ekFekSF7LNYUBs9qnNhSDBw8j4jYMLus8i8" id="e12"></audio>
+  <audio src="./13.mp3" id="e13"></audio>
+    <audio src="./15.mp3" id="e15"></audio>
+      <audio src="./16.mp3" id="e16"></audio>
+  <audio src="./14.wav" id="e14"></audio>
+    <audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/l.mp3" id="start"></audio>
+    <audio id="over"></audio>
+    
+    <!-- 隐藏元素 -->
+ 
+    <div align="center">
+        <select style="font-size:22px" hidden></select>
+    </div>
+    <button id="createButton3" hidden>3</button>
+    
+    <script>
+        // JavaScript代码保持不变，但已格式化
+        const dice=['','https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/1.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzEuc3ZnIiwiaWF0IjoxNzcwOTc1NDQ2LCJleHAiOjE4MDI1MTE0NDZ9.etHycYmpR6CUyef4Rz7G5mBEOYKbiWfzpmPkShbfQDc',
+           'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/2.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzIuc3ZnIiwiaWF0IjoxNzcwOTc1NTQxLCJleHAiOjE4MDI1MTE1NDF9._sVkqU0hQ5d6qQtxtarOEKgc0GLRpFWib6yZmW3ejaA',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/3.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzMuc3ZnIiwiaWF0IjoxNzcwOTc1NTQ2LCJleHAiOjE4MDI1MTE1NDZ9.617AMvtHjJIrthVpG_7dtXPz-rXTlCbtaZ7BV_v3CsM',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/4.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzQuc3ZnIiwiaWF0IjoxNzcwOTc1NTUwLCJleHAiOjE4MDI1MTE1NTB9.EBBIWQVAsBCEkvLVbWfQB0949msRCOhAmeKHJ42aHbM', 
+       'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/5.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzUuc3ZnIiwiaWF0IjoxNzcwOTc1NTUyLCJleHAiOjE4MDI1MTE1NTJ9.5XK_mkWJcNYBr-UuXVZBP7JQb0E963Q3a4u9aw6Zfbk',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/6.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzYuc3ZnIiwiaWF0IjoxNzcwOTc1NTU0LCJleHAiOjE4MDI1MTE1NTR9.1tTQQntrHHWxmkSjomclelmnR5wtVsIgb_4fQ0OARK0']
+const diceyellow=['','https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/11.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzExLnN2ZyIsImlhdCI6MTc3MDk3NTEyNywiZXhwIjoxODAyNTExMTI3fQ.Ss4JIo9RT2nOfiCZWTtjS3tWa8-QLbswmK0YIsQKEH4',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/12.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzEyLnN2ZyIsImlhdCI6MTc3MDk3NTcwOSwiZXhwIjoxODAyNTExNzA5fQ.85vmN6oiLBRsRieUBOm1roIHkz0jGybwADFM0FnJMpg',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/13.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzEzLnN2ZyIsImlhdCI6MTc3MDk3NTcxNCwiZXhwIjoxODAyNTExNzE0fQ.inZezNZ54n4_UjyL1Fbx8JRiJGEwGUMZxcMmHidHzh0',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/14.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzE0LnN2ZyIsImlhdCI6MTc3MDk3NTcxOSwiZXhwIjoxODAyNTExNzE5fQ.DzGrV1XyuEPcIsc64SsOG90MqpBxYFAU5AG9kH2pzaw',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/15.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzE1LnN2ZyIsImlhdCI6MTc3MDk3NTcyMywiZXhwIjoxODAyNTExNzIzfQ.iDtM_g2fBNWM1dU9-zOemArQIyrA12Kp-rz8b3DrEnY',
+'https://rsuemlfkeakqqyqusohv.supabase.co/storage/v1/object/sign/a/16.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84OTQxYmNlNi05MTk0LTRlY2QtOTVmYi1mZTk2Yjc4ZmI2ZmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhLzE2LnN2ZyIsImlhdCI6MTc3MDk3NTcyNywiZXhwIjoxODAyNTExNzI3fQ.p8O3_lcx-38LK_ByvvTF4y5mqwywrVz3HUGQFcQzW-M']
+        var x = y = i = ii = s0 = s1 = k = data = 0;
+        const apikey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdWVtbGZrZWFrcXF5cXVzb2h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNTE3MzMsImV4cCI6MjA3NDYyNzczM30.5lcnkbMu2yYVLStoVgM2_ZBatUvxRkYaaouh7V3_ZlA';
+        const supabaseurl = 'https://rsuemlfkeakqqyqusohv.supabase.co';
+        
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        
+        async function rolldice() {
+            // ... 原有函数体保持不变，但已格式化 ...
+            await fetch(supabaseurl + '/rest/v1/Dice', {
+                method: 'POST',
+                headers: {
+                    Apikey: apikey,
+                    Authorization: 'Bearer ' + apikey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    key: getCookie('key'),
+                    name: getCookie('name'),
+                    action: 'login'
+                }),
+            })
+            
+            if (getCookie('inplay')) {
+                return alert(inplay);
+            }
+            
+            document.cookie = 'inplay=true;Max-Age=5';
+            //document.querySelector('#g').innerHTML = pleasewait;
+   
+            document.querySelector('#rolldice').innerHTML = '<span class="loading"></span> 等待中...';
+            
+            s1 = window.setInterval(fetchdata, 500);
+        }
+        
+        async function fetchdata() {
+            // ... 原有函数体保持不变，但已格式化 ...
+            document.cookie = 'inplay=true;Max-Age=2';
+            const response = await fetch(supabaseurl + '/functions/v1/dice/_' + getCookie('key'), {
+                method: 'POST',
+                headers: {
+                    Authorization: 'Bearer ' + apikey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(null),
+            })
+            
+            data = await response.json();
+            
+            if (data.id < 0) {
+                window.clearInterval(s1);
+                if (getCookie('inplay')) {
+                    document.cookie = 'inplay=;Max-Age=0';
+                    alert(滿);
+                }
+                return;
+            }
+            
+            i = 0;
+           document.querySelector('#rolldice').hidden = 1;
+            document.querySelector('#joker').hidden = 0;
+
+            
+            data['1iscalled'] && (document.querySelector('#joker').innerHTML = 注意事项);
+            
+            if (getCookie('inplay')) {
+                document.querySelector('#diceDisplay').hidden = document.querySelector('#查看').hidden = document.querySelector('#o').hidden =0;
+                 while (i < 5) {
+                document.querySelector('#d' + i).src = dice[data.dice[data.id][i]] ;
+                // 为骰子添加对应的颜色类
+                document.querySelector('#d' + i).className = `dice dice-value-${data.dice[data.id][i]}`;
+                i++;
+            }
+                if (0 == data.time) {
+                    clearInterval(s0);
+                    if ((data.id + 1) % data.names.length == data.turn) {
+                        document.querySelector('#g').innerHTML = 您的;
+                    }
+                    
+                    document.querySelector("#start").pause();
+                    document.querySelector('#close').click();
+                    window.clearInterval(s1);
+                    document.cookie = 'inplay=;Max-Age=0';
+    
+                    while (ii < data.names.length) {
+                        i = 0;
+                        document.querySelector('#se').innerHTML += '<option>' + data.names[(ii + data.id) % data.names.length] + '</option>';
+                        
+                        if (ii > 0) {
+                            window.setTimeout(ending2, 800 * (k + ii), (ii + data.id) % data.names.length);
+                        }
+                        
+                        while (i < 5) {
+                            if (data['dice'][(ii + data.id) % data.names.length][i] == data.y) {
+                                k += 1;
+                                window.setTimeout(ending, 800 * (k + ii), k, data.y, i);
+                            }
+                            
+                            if (data['dice'][(ii + data.id) % data.names.length][i] == 1 && data['1iscalled'] == false) {
+                                k += 1;
+                                window.setTimeout(ending, 800 * (k + ii), k, 1, i);
+                            }
+                            
+                            i += 1;
+                        }
+                        
+                        ii += 1;
+                    }
+                    
+                    i = "over";
+                    
+                    if (data.turn == data.id) {
+                        if (k >= data.x) {
+                            i = 'loss';
+                        } else {
+                            i = 'win';
+                        }
+                    }
+                    
+                    if ((data.id + 1) % data.names.length == data.turn) {
+                        if (k < data.x) {
+                            i = "loss";
+                        } else {
+                            i = "win";
+                        }
+                    }
+                    
+                    window.setTimeout(ending3, 800 * (ii + k + 1), i);
+                } else {
+                    document.querySelector('#以下').innerHTML = 以下为您的骰子;
+                   // document.querySelector("#o").innerHTML = 每人 + data.names.length * 5 + j + '<br>';
+                    
+                    if (data.turn<0) {
+                        start()
+                      
+                        return;
+                    }
+                    
+                    if (6 * x + y < 6 * data.x + data.y) {
+                        x = data.x;
+                        y = data.y;
+                        clearInterval(s0);
+                        document.querySelector("body > div.game-container > div.controls-section > div.hint-section").hidden=0
+                        if (6 * x + y > 6 * data.names.length) {
+                            document.querySelector('#r').hidden=0
+                            document.querySelector('#record').innerHTML += '<li class="record-item">' + "<b>" + data.names[(data.turn ? data.turn : data.names.length) - 1] + '</b>: ' + x + 个 + y + '</li>';
+                            document.querySelector('#r').innerHTML = "<b>" + data.names[(data.turn ? data.turn : data.names.length) - 1] + '</b>: ' + x + 个 + '<img height=28 width=28 src="' + dice[y] + '">';
+                        }
+                        
+                        document.querySelector('#start').play();
+                        
+                        if (data.turn == data.id) {
+                            myturn();
+                        } else {
+                            notmyturn();
+                        }
+                    }
+                }
+            }
+        }
+        function start(){
+          clearInterval(s0)
+          s0=setInterval(timer2,50)
+        }
+          function timer2(){  document.querySelector('#g').innerHTML = "已有" + data.names.length + 人参加 + (1800000000000==data.time?'?':Math.ceil((data.time - Number(new Date())) / 1000)) + 開始;
+                        } 
+                        
+        function timer() {
+            document.querySelector('#g').innerHTML = bid + Math.ceil((data.time - Number(new Date())) / 1000) + 猜测;
+            
+            if (document.querySelector('#inputArea').hidden) {
+                document.querySelector('#g').innerHTML = 挑战 + '<br>' + hint[0] + decision + Math.ceil((data.time - Number(new Date())) / 1000) + 决定;
+            }
+        }
+        
+        function notmyturn() {
+            document.querySelector('#createButton2').disabled = document.querySelector('#createButton1').disabled = 0;
+            document.querySelector('#x').value = document.querySelector('#y').value = document.querySelector('#y').placeholder = '';
+            document.querySelector('#inputArea').hidden = 1;
+            document.querySelector('#createButton1').hidden = document.querySelector('#createButton2').hidden = 1;
+            document.querySelector('#g').innerHTML = 轮到 + data.names[data.turn] + 了;
+            document.querySelector('#hint').innerHTML = hint[0] + 您 + hint[1] + x + hint[2] + y + hint[4] + data.names[data.turn] + hint[5];
+            
+            if ((data.id + 1) % data.names.length != data.turn || 6 * x + y == 6 * data.names.length) {
+                document.querySelector('#hint').innerHTML = players + data.names[0];
+                i = 1;
+                
+                while (i < data.names.length) {
+                    document.querySelector('#hint').innerHTML += comma + data.names[i];
+                    i++;
+                }
+                
+                document.querySelector('#hint').innerHTML += bracket;
+            }
+        }
+        
+        function myturn() {
+            if (y == 6) {
+                document.querySelector('#x').placeholder = 1 + x + 以上;
+            } else {
+                document.querySelector('#x').placeholder = x + 以上;
+            }
+            
+            if (6 * x + y > 6 * data.names.length) {
+                document.querySelector('#ok').innerHTML = 是;
+                document.querySelector('#createButton2').hidden = document.querySelector("#createButton1").hidden = 0;
+                document.querySelector('#inputArea').hidden = 1;
+                document.querySelector('#hint').innerHTML = hint[0] + data.names[(data.turn ? data.turn : data.names.length) - 1] + hint[1] + x + hint[2] + y + hint[3];
+            } else {
+                document.querySelector("#createButton1").hidden = document.querySelector('#inputArea').hidden = 0;
+                document.querySelector('#ok').innerHTML = ok;
+                document.querySelector('#hint').innerHTML = players + data.names[0];
+                i = 1;
+                
+                while (i < data.names.length) {
+                    document.querySelector('#hint').innerHTML += comma + data.names[i];
+                    i++;
+                }
+                
+                document.querySelector('#hint').innerHTML += bracket;
+            }
+            timer()
+            s0 = setInterval(timer, 60);
+        }
+        
+        function ending(k1, y11, i1) {
+            
+            document.querySelector("#o").innerHTML =  k1 + 个 + '<img src="' + dice[data.y] + '">';
+            document.querySelector("#d" + i1).src = diceyellow[y11];
+            document.querySelector("#e" + k1).play();
+        }
+        
+        function ending2(ii1) {
+            document.querySelector("#以下").innerHTML = 以下 + data.names[ii1] + 的骰子;
+            var x1 = 0;
+            
+            while (x1 < 5) {
+                 document.querySelector('#d' + x1).className = `dice dice-value-${data['dice'][ii1][x1]}`;
+                document.querySelector('#d' + x1).src =dice[data['dice'][ii1][x1]] ;
+                x1++;
+            }
+        }
+        
+        function ending3(p1) {
+            document.querySelector("#以下").innerHTML = 以下;
+            document.querySelector("#以下为").innerHTML = 的骰子; document.querySelector("#se").hidden=0
+            document.querySelector("#se > :nth-last-child(1)").selected = true;
+            document.querySelector("#" + p1).play();
+            alert(({
+                loss: loss,
+                win: win,
+                over: 遊戲
+            })[p1]);
+        }
+        
+        // 语言设置保持不变...
+        if (navigator.language == 'zh-TW') {
+            var 設定名稱 = '設定名稱';
+            var win = '你贏了';
+            var loss = '你輸了';
+            var 以下为您的骰子 = '以下為您的骰子：';
+            var 您 = '您';
+            var 的骰子 = '的骰子：';
+            var 每人 = "（每人5個骰子，共";
+            var j = '個）';
+            var 是 = '是';
+            var 个 = '個';
+            var hint = ['（', '猜測所有玩家的骰子裡至少有', '個', '。）', '；', '可以挑戰您的猜測。 ）'];
+            var 以上 = '以上';
+            var 以下 = '以下為';
+            document.querySelector('#rolldice').innerHTML = '<span class="btn-icon">🎲</span>開始遊戲';
+            var 總 = '總計：';
+            var 注意事项 = '注意事項：已有玩家叫過1點，此後1點不再代表任意骰子點數';
+            var 猜测 = '秒内輸入您的猜測：';
+            var 无效 = '輸入值無效';
+            var 决定 = '秒內決定）';
+            var 遊戲 = '遊戲結束';
+            var bracket = "）";
+            var comma = "、";
+            var 轮到 = '輪到';
+            var 了 = '了';
+            var players = "（本局玩家：";
+            var 人参加 = '人參加<br>（';
+          var 開始='秒後開始遊戲）'
+            document.querySelector("#inputArea > div:nth-child(1) > label").innerHTML="數量:"
+            document.querySelector("#inputArea > div:nth-child(2) > label").innerHTML="點數:"
+            var 挑战 = "是否要挑戰前一位玩家的猜測？";
+            var inplay = '您已經在進行遊戲了';
+            var pleasewait = '請稍候...';
+            var 滿 = '目前人數已滿';
+            document.querySelector('#close').innerHTML = '關閉';
+            var decision = '請在';
+            var bid = '請在';
+            var 您的 = '您的猜測被挑戰了';var ok='確定'
+              document.querySelector('#查看').innerHTML = '📜 查看完整記錄';    document.querySelector('#f').innerHTML = '遊戲記錄'
+        } else if (navigator.language == 'zh-CN' || navigator.language == 'zh') {
+            var 以下为您的骰子 = '以下为您的骰子：';
+            var 您 = '您';
+            var 的骰子 = '的骰子：';
+          var 開始='秒后开始游戏）'
+            var 設定名稱 = '设定名称';
+            var win = '你赢了';
+            var loss = '你输了';
+            var 以上 = '以上';
+            var 以下 = '以下为';
+            var 每人 = "（每人5个骰子，共";
+            var j = '个）';
+            document.querySelector('#joker').innerHTML = "注意事项：1点代表任意骰子点数";
+            var 注意事项 = '注意事项：已有玩家叫过1点，此后1点不再代表任意骰子点数';
+            var players = "（本局玩家：";
+            var bracket = "）";
+            document.querySelector('#close').innerHTML = '关闭';
+            var comma = "、";
+            var 是 = '是';
+            var 个 = '个';
+            var 挑战 = '是否要挑战前一位玩家的猜测？';
+            var decision = '请在';
+            var bid = '请在';
+            var 遊戲 = '游戏结束';
+            var 猜测 = '秒内输入您的猜测：';
+            var 您的 = '您的猜测被挑战了';
+            var 无效 = '输入值无效';
+            var 决定 = '秒内决定）';
+            var 轮到 = '轮到';
+            var 了 = '了';
+            var 人参加 = '人参加<br>（';
+            var hint = ['（', '猜测所有玩家的骰子里至少有', '个', '。）', '；', '可以挑战您的猜测。）'];
+            var 總 = '总计：';
+            document.querySelector("body > div >div> h1").innerHTML = '大话骰';
+            var pleasewait = '请稍候...';
+            var 滿 = '目前人数已满';
+            var inplay = '您已经在进行游戏了';var ok='确定'
+                      document.querySelector('#rolldice').innerHTML = '<span class="btn-icon">🎲</span>开始游戏';
+        } else {
+            var 遊戲 = 'GAME OVER';
+            var 總 = 'Total: ';
+            var 以下 = 'Here are ';
+            var 以上 = '+';
+            var 以下为您的骰子 = 'Here are your dice:';
+            var 您 = 'You';
+            var 的骰子 = '\'s dice:';
+            var 无效 = 'Invalid input value.';
+            var hint = ['(', ' bid ', ' ', 's.)', 's; ', ' may challenge your bid.)'];
+            var 每人 = "(Each player has 5 dice; ";
+            var j = ' are in total.)';
+            document.querySelector('#joker').innerHTML = "Note: \"1\" counts as any value.";
+            var 注意事项 = 'Note: Since \"1\" has been called before, it does not count as any value now.';
+            var players = "(Players: ";
+            var bracket = ")";
+            var comma = ", ";
+            var 挑战 = 'Do you wanna challenge the last players\' bid?';
+            var 是 = 'Yes';
+            document.querySelector('#createButton2').innerHTML = '<span class="btn-icon">✗</span>No';
+            var 个 = 'x';
+            var 猜测 = ' seconds:';
+            var decision = 'Click yes or no within ';
+            var bid = 'Please make your bid within ';
+            var 决定 = ' seconds.)';
+            var 滿 = 'The number of players has reached the limit.';
+            var 設定名稱 = 'Enter your name:';
+            var loss = 'You lose';
+            document.querySelector('#rolldice').innerHTML = '<span class="btn-icon">🎲</span>Play';
+            var win = 'You win';
+            var 轮到 = 'It\'s ';
+            var 了 = '\'s turn.';
+            document.querySelector("#inputArea > div:nth-child(1) > label").innerHTML='Number:'
+            document.querySelector("#inputArea > div:nth-child(2) > label").innerHTML='Face Value:'
+            document.querySelector("body>div>div>h1").innerHTML = 'Liar\'s Dice';
+            document.querySelector('#查看').innerHTML = '📜 View Full Record';
+            var inplay = 'You are already playing the game.';
+            var pleasewait = 'please wait...';
+            var 您的 = 'Your bid is being challenged.';var ok='OK';document.querySelector('#f').innerHTML="Full Record"
+        }
+        
+        // 初始化代码保持不变...
+        if (getCookie('key')) {
+            document.querySelector("#rolldice").hidden = false;
+            
+            if ('' == getCookie('name')) {
+                document.cookie = 'name=' + getCookie('key').substring(12) + ';Max-Age=10000000';
+            } else {
+                document.cookie = 'name=' + getCookie('name') + ';Max-Age=10000000';
+            }
+            
+            document.cookie = 'key=' + getCookie('key') + ';Max-Age=10000000';
+            document.querySelector("#nam").innerHTML = getCookie('name');
+          
+        } else {
+            let sign = prompt(設定名稱);
+            
+            if (sign != null) {
+                document.cookie = 'key=' + Math.floor(10 ** 15 * Math.random());
+                document.cookie = 'name=' + sign;
+                window.location.reload();
+            }
+        }
+        
+        // 事件监听器保持不变...
+        document.querySelector('#createButton2').onclick = function() {
+            document.querySelector('#ok').innerHTML = ok;
+            this.hidden = 1;
+            document.querySelector('#inputArea').hidden = 0;
+            document.querySelector('#hint').innerHTML = players + data.names[0];
+            i = 1;
+            
+            while (i < data.names.length) {
+                document.querySelector('#hint').innerHTML += comma + data.names[i];
+                i++;
+            }
+            
+            document.querySelector('#hint').innerHTML += bracket;
+        }
+        
+        document.querySelector('#createButton1').onclick = async function() {
+            this.disabled = document.querySelector('#createButton2').disabled = 1;
+            
+            if (document.querySelector('#createButton2').hidden) {
+                if (document.querySelector("#y").value > 0 && document.querySelector("#y").value <= 6 && document.querySelector("#x").value % 1 + document.querySelector("#y").value % 1 == 0 && 6 * document.querySelector("#x").value + Number(document.querySelector("#y").value) > 6 * x + y) {
+                    await fetch(supabaseurl + '/rest/v1/Dice', {
+                        method: 'POST',
+                        headers: {
+                            Apikey: apikey,
+                            Authorization: 'Bearer ' + apikey,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: document.querySelector('#x').value,
+                            y: document.querySelector('#y').value,
+                            key: getCookie('key'),
+                            name: getCookie('name'),
+                            action: 'number'
+                        }),
+                    });
+                } else {
+                    alert(无效);
+                    this.disabled = 0;
+                }
+            } else {
+                await fetch(supabaseurl + '/rest/v1/Dice', {
+                    method: 'POST',
+                    headers: {
+                        Apikey: apikey,
+                        Authorization: 'Bearer ' + apikey,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        key: getCookie('key'),
+                        name: getCookie('name'),
+                        action: 'number'
+                    }),
+                }); window.scrollTo(0,0)
+            }
+        }
+        
+        document.querySelector('#se').onchange = function() {
+            i = 0;
+            
+            while (i < 5) {
+                document.querySelector('#d' + i).src = dice[ data['dice'][data.names.indexOf(this.value)][i]];
+                document.querySelector('#d' + i).className=`dice dice-value-${data['dice'][data.names.indexOf(this.value)][i]}`
+                if (data['1iscalled'] == false && data['dice'][data.names.indexOf(this.value)][i] == 1) {
+                    document.querySelector('#d' + i).src =diceyellow[1];
+                }
+                
+                if (data.y == data['dice'][data.names.indexOf(this.value)][i]) {
+                    document.querySelector('#d' + i).src = diceyellow[data.y];
+                }
+                
+                i++;
+            }
+        }
+        
+        document.querySelector('#x').onchange = function() {
+            if (['zh', 'zh-TW', 'zh-CN'].includes(navigator.language)) {
+                if (document.querySelector("#x").value > x) {
+                    document.querySelector("#y").placeholder = '1,2,3,4,5或6';
+                }
+                
+                if (document.querySelector("#x").value == x && y < 6) {
+                    document.querySelector("#y").placeholder = '2,3,4,5或6'.substring((y - 1) * 2);
+                }
+            } else {
+                if (document.querySelector("#x").value > x) {
+                    document.querySelector("#y").placeholder = '1~6';
+                }
+                
+                if (document.querySelector("#x").value == x && y == 5) {
+                    document.querySelector("#y").placeholder = '6';
+                }
+                
+                if (document.querySelector("#x").value == x && y < 5) {
+                    document.querySelector("#y").placeholder = 1 + y + '~6';
+                }
+            }
+        };
+        
+        document.querySelector('#rolldice').onclick = function() {
+            document.querySelector("#rolldice").disabled = 1;
+            rolldice();
+        };
+        
+        // 关闭弹窗
+        document.querySelector('#close').onclick = function() {
+            document.getElementById('historyDialog').close();
+        };/*
+      
+*/
+    </script>
+</body>
+</html>
