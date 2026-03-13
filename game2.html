@@ -1,0 +1,939 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+
+    <title>終極密碼</title>
+  </head>
+<style>
+
+        /* 全局样式 */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=VT323&display=swap');
+        
+        :root {
+            --primary-color: #ff8000;
+            --secondary-color: #0066cc;
+            --accent-color: #ffcc00;
+            --text-color: #333;
+            --light-color: #fff;
+            --dark-color: #222;
+            --success-color: #4CAF50;
+            --danger-color: #f44336;
+            --background-gradient: linear-gradient(135deg, #ff8000 0%, #ffaa00 100%);
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --border-radius: 20px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--background-gradient);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* 游戏容器 */
+        .game-container {
+            max-width: 420px;
+            width: 100%;
+            background: var(--container-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 2px solid var(--secondary-color);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 头部样式 */
+        .game-header {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-header hr {
+            border: none;
+            height: 3px;
+            background: var(--accent-color);
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 3px;
+        }
+        
+        /* 玩家信息 */
+        .player-info {
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 102, 204, 0.1);
+            border-bottom: 2px solid rgba(0, 102, 204, 0.2);
+        }
+        
+        .player-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+           
+        }
+        
+        .game-status {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        /* 骰子区域 */
+        .dice-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .dice-title {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        button[hidden]{display:none}
+        .dice {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .dice:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .joker-note > b {
+          font-size: 1.2rem
+        }
+        .joker-note {
+            font-size: 0.9rem;
+            color: var(--danger-color);
+            text-align: center;
+            padding: 8px;
+            background: rgba(244, 67, 54, 0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        /* 控制区域 */
+        .controls-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        iframe{display:none !important}
+        .timer-display {
+            font-size: 1.4rem;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .bid-info {
+            background: rgba(0, 102, 204, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 35px;
+        }
+        
+        .bid-info p {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        /* 输入区域 */
+        .input-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        #fc2_footer {display:none}
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .input-group label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+         .number-input::placeholder {font-size:1rem;
+
+         }
+        .number-input {
+            width: 120px;
+            height: 45px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .number-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 128, 0, 0.2);
+        }
+        
+        /* 按钮样式 */
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 120px;
+        display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0044aa, var(--secondary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #666, #888);
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #888, #666);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #45a049);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #d32f2f);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-icon {
+            font-size: 1.2rem;
+        }
+        
+        /* 提示信息 */
+        .hint-section {
+            padding: 15px;
+            background: rgba(255, 204, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .dice-title > img {
+            width:1.1rem;
+            height:1.1rem
+        }
+        .hint-text {
+            font-size: 1rem;
+            color: #d48806;
+            line-height: 1.5;
+        }
+        
+        /* 历史记录弹窗 */
+        dialog {
+            margin: 0 auto;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0;
+            max-width: 300px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+        }
+        
+        .dialog-header {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        div[hidden] {display:none} 
+        .dialog-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .dialog-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .record-list {
+            list-style: none;
+        }
+        
+        .record-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            font-size: 1.1rem;
+        }
+        
+        .record-item b {
+            color: var(--secondary-color);
+        }
+        
+        .dialog-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .game-container {
+                max-width: 100%;
+            }
+            
+            .game-header h1 {
+                font-size: 2rem;
+            }
+            
+            .dice {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .input-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                min-width: 110px;
+            }
+        }
+        
+        /* 动画效果 */
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* 骰子点数的颜色标记 */
+        .dice-value-1 { border: 3px solid #4CAF50; }
+        .dice-value-2 { border: 3px solid #2196F3; }
+        .dice-value-3 { border: 3px solid #9C27B0; }
+        .dice-value-4 { border: 3px solid #FF9800; }
+        .dice-value-5 { border: 3px solid #F44336; }
+        .dice-value-6 { border: 3px solid #009688; }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 102, 204, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }</style>
+  <body>
+
+<div class='game-container'>
+<div class='game-header'><h1>終極密碼</h1><hr></div>
+        <div class="player-info">
+            <div class="player-name" id="nam"></div>
+        </div> 
+
+<div id="maingame" hidden class="controls-section">
+<div id='score' class="bid-info">
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+</div>
+    <div class="joker-note" id="joker"><b></b>（密碼為總和的末兩位）</div>
+<div id="joke" style="background-color:#fff;border:2px solid;margin:0 auto;margin-top:5px;border-radius:3px;height:100px;overflow:auto"></div>
+</div>        <div class="controls-section">
+            <!-- 当前出价显示 -->
+            <div class="bid-info" id="r" hidden></div>
+            
+            <!-- 计时器 -->
+            <div class="timer-display" id="g"></div>
+            
+            <!-- 输入区域 -->
+            <div class="input-section" id="inputArea" hidden>
+    
+                <div class="input-group"> <span id="lower"></span><input type="number" id="se" class="number-input"><span id="upper"></span>
+                </div>
+            </div>
+            
+            <!-- 按钮区域 -->
+        <div class="buttons-container">
+                <button id="rolldice" class="btn btn-primary pulse" hidden=""><span class="btn-icon">＊</span>開始遊戲</button>
+                <button id="createButton1" class="btn btn-success" hidden>
+                    <span class="btn-icon">✓</span><span id="ok"></span>
+                </button>
+            </div>
+            
+            <!-- 提示信息 -->
+            <div class="hint-section" hidden id='u'>
+                <div class="hint-text" id='hint'></div>
+            </div>
+            
+            <!-- 查看记录链接 -->
+     
+        </div>
+<audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/202510181719284ea.mp3" id="你输了"></audio>
+<audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/202510181719284ea.mp3" id="你輸了"></audio>
+<audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/202510181720318f2.mp3" id="你贏了"></audio>
+<audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/202510181720318f2.mp3" id="你赢了"></audio>
+<audio src="./13.mp3" id="e13"></audio>
+<audio src="./1.mid.mp3" id="e1"></audio>
+<audio src="./2.mid.mp3" id="e2"></audio>
+<audio src="./3.mid.mp3" id="e3"></audio>
+<audio src="./4.mid.mp3" id="e4"></audio>
+<audio src="./5.mid.mp3" id="e5"></audio>
+<audio src="./6.mid.mp3" id="e6"></audio>
+<audio src="./7.mid.mp3" id="e7"></audio>
+<audio src="./8.mid.mp3" id="e8"></audio>
+<audio src="./9.mid.mp3" id="e9"></audio>
+<audio src="./10.mid.mp3" id="e10"></audio>
+<audio src="./11.mid.mp3" id="e11"></audio>
+<audio src="./12.mid.mp3" id="e12"></audio>
+<audio src="https://blog-imgs-168.fc2.com/k/z/v/kzvldrgk29m1/2.mp3" id="e14"></audio>
+<audio src="https://blog-imgs-95.fc2.com/k/z/v/kzvldrgk29m1/l.mp3" id="start"></audio>
+<button id="createButton3" hidden>3</button>
+
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    --> </div>
+    
+<script>
+
+var p1,b,x1,p4,y1,j,y,turn,ord,fetching,m,board;
+board=[[9,9,9,9,9,9,9,9,9,9,9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9],[9,9,9,9,9,9,9,9,9,9,9]];
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+async function rolldice(name,key) {
+  document.querySelector('#hint').innerHTML=若为;
+await fetch(supabaseurl + '/rest/v1/ggg', {
+                method: 'POST',
+                headers: {
+                    Apikey: apikey,
+                    Authorization: 'Bearer ' + apikey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    key: getCookie('key'),
+                    name: getCookie('name'),
+                    action: 'login'
+                }),
+            })
+if (getCookie('inplay')) {
+  return alert(inplay);
+}
+document.cookie='inplay=true;Max-Age=5'
+
+            document.querySelector('#rolldice').innerHTML = '<span class="loading"></span> 等待中...';
+s1=window.setInterval(fetchdata,500);
+console.log(s1)
+  }
+var range=[-Infinity,Infinity],data,p2,k,p3,a,p,i,s1,s2,s0,ii,e,x=0;
+ord=fetching=0;m=3;
+
+const supabaseurl ='https://rsuemlfkeakqqyqusohv.supabase.co'
+const apikey='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdWVtbGZrZWFrcXF5cXVzb2h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNTE3MzMsImV4cCI6MjA3NDYyNzczM30.5lcnkbMu2yYVLStoVgM2_ZBatUvxRkYaaouh7V3_ZlA'
+
+async function update(num1) {
+ document.querySelector('#createButton1').disabled=1;
+ clearInterval(s0);await fetch(supabaseurl + '/rest/v1/ggg', {
+                method: 'POST',
+                headers: {
+                    Apikey: apikey,
+                    Authorization: 'Bearer ' + apikey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    key: getCookie('key'),
+                    name: getCookie('name'),
+                    action: 'number', num:num1
+                }),
+            })
+ }
+
+async function update1(num1) {
+ document.querySelector('#createButton1').disabled=1;//clearInterval(s0);
+ await fetch(supabaseurl + '/rest/v1/ggg', {
+                method: 'POST',
+                headers: {
+                    Apikey: apikey,
+                    Authorization: 'Bearer ' + apikey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    key: getCookie('key'),
+                    name: getCookie('name'),
+                    action: 'password'+x, num:num1
+                }),
+            })
+ }
+async function fetchdata() {
+  
+  document.cookie='inplay=true;Max-Age=2';
+  const response = await fetch('https://rsuemlfkeakqqyqusohv.supabase.co/functions/v1/password/_'+getCookie('key'), {
+  method: 'POST',
+  headers: {
+    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdWVtbGZrZWFrcXF5cXVzb2h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNTE3MzMsImV4cCI6MjA3NDYyNzczM30.5lcnkbMu2yYVLStoVgM2_ZBatUvxRkYaaouh7V3_ZlA',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ name: 'Fetch' }),
+})
+data = await response.json()
+if (data.id<0) {
+  window.clearInterval(s1);
+  if(getCookie('inplay')){
+    document.cookie='inplay=;Max-Age=0';
+  alert(滿)}
+  return
+}
+i=0;
+document.querySelector('#rolldice').hidden=1
+while (data['names'][i]!=null){
+    if (data['numbers'][i]!=null){
+  document.querySelector("#score > :nth-child("+(1+i)+")").innerHTML='<b>'+data['names'][i]+'</b>: '+data['numbers'][i]
+      }++i
+}
+k=0
+if (!data['numbers'].includes('?') &&data.numbers.length>1){
+  i=0
+  while (i<data.numbers.length){
+k+=data.numbers[i];++i
+  }
+  document.querySelector("#hint").innerHTML=接下
+  document.querySelector("#joker>b").innerHTML=''+总和+k+"<br>"
+}
+//console.log(data)
+if (data.end){
+  window.clearInterval(s1); document.querySelector('#e14').pause();document.querySelector('#maingame').hidden=0
+  turn=data['turn'];
+  document.querySelector("#u").hidden=1;document.querySelector('#g').innerHTML=遊戲
+  if (getCookie('inplay')) {
+    document.cookie='inplay=;Max-Age=0';
+    if (data.range[0]==data.range[1]) {
+      document.querySelector('#joke').innerHTML+='<div>+ '+data['names'][turn]+输入了+data.range[0]+period+'<br>+ '+是密码+data.range[0]+period+'</div>'
+ 
+    }
+    if (data.range[1]==data.range[0]+2) {
+if (data.range[1]!=range[1]){
+       document.querySelector('#joke').innerHTML+='<div>+ '+data['names'][[data.numbers.length-1,0,1,2,3,4][turn]]+输入了+data.range[1]+period+'<br>+ '+密码+data.range[0]+和+data.range[1]+之间+'<br>+ '+data['names'][turn]+可选+'</div>'
+}else{
+  document.querySelector('#joke').innerHTML+='<div>+ '+data["names"][[data.numbers.length-1,0,1,2,3,4][turn]]+输入了+data.range[0]+period+'<br>+ '+密码+data.range[0]+和+data.range[1]+之间+'<br>+ '+data['names'][turn]+可选+'</div>'
+
+}
+    }
+    if (data.range[1]>data.range[0]+2) {
+      document.querySelector('#joke').innerHTML+='<div>+ '+data['names'][turn]+超时+'</div>'
+    } document.querySelector('#joke').scrollTo(0,2000);
+    if (data.turn==data.id) {
+      document.querySelector('#你輸了').play()
+      alert(loss)
+    }else{
+      document.querySelector('#你贏了').play()
+    }
+  }
+return}
+if (getCookie('inplay')){
+if (data.chance==0) {
+ start()
+}if (data.chance>0 && data.chance<10){
+  clearInterval(s0)
+   if (data.numbers[data.id]==null){
+    notinput()
+  }else{
+    waiting()
+  }
+}
+ if (data.chance==10){
+  if (data.turn==data.id){
+    myturn()
+  }else{
+    notmyturn()
+  }
+}}
+};
+function timer(){
+  document.querySelector('#g').innerHTML=请在+Math.ceil((data.time-Number(new Date()))/1000)+秒;
+  if (data.time<Number(new Date())) {
+    clearInterval(s0);
+    document.querySelector('#se').hidden=document.querySelector('#lower').hidden=document.querySelector('#upper').hidden=document.querySelector('#createButton1').hidden=1
+  }
+}
+function notinput(){
+  console.log(x,data.chance)
+  if (x<data['chance']) {
+    x=data.chance;document.querySelector('#g').innerHTML=為了;
+  document.querySelector("#inputArea").hidden=0;document.querySelector('#createButton1').hidden=0;
+  document.querySelector('#createButton1').disabled=0; document.querySelector('#se').value='';
+  if (x!=1) {
+document.querySelector('#joke').innerHTML+='<div>+ '+由于+'</div>'
+document.querySelector('#maingame').hidden=0
+  }
+document.querySelector('#joke').scrollTo(0,2000);
+  }
+}
+function timer2(){
+
+  if (navigator.language[0]=='z'){
+  document.querySelector('#g').innerHTML=已有+data.names.length+人}else{
+    document.querySelector('#g').innerHTML=data.names.length+(data.names.length==1?' player has joined<br>(the game will start in ':' players have joined<br>(the game will start in ')
+  }
+  document.querySelector('#g').innerHTML+=(1800000000000==data.time? "?":Math.ceil((data.time-Number(new Date()))/1000))+開始;
+}
+function start(){
+  clearInterval(s0)
+  s0=setInterval(timer2,50)
+  console.log(s0)
+}
+function waiting() {
+  document.querySelector('#g').innerHTML=等待;
+ document.querySelector("#inputArea").hidden=1;document.querySelector('#createButton1').hidden=1;
+  document.querySelector('#se').value='';
+   document.querySelector('#maingame').hidden=0;
+}
+function notmyturn() {
+    document.querySelector('#maingame').hidden=0; if (range[1]>data.range[1]) {
+     //document.querySelector('#br1').hidden=1
+    if (range[1]*0==0) {
+document.querySelector('#joke').innerHTML+='<div>+ '+data['names'][[data.numbers.length-1,0,1,2,3,4][data.turn]]+输入了+data.range[1]+period+'<br>+ '+密码+data.range[0]+和+data.range[1]+之间+'</div>'
+document.querySelector('#joke').scrollTo(0,2000);
+    }
+    range[0]=data.range[0];range[1]=data.range[1];
+   document.querySelector('#g').innerHTML=轮到+data.names[data.turn]+了
+ document.querySelector("#inputArea").hidden=1;
+    document.querySelector('#createButton1').hidden=1;document.querySelector('#createButton1').disabled=0;
+    document.querySelector('#se').value='';
+    document.querySelector('#lower').innerHTML='';document.querySelector('#upper').innerHTML=''
+    document.querySelector('#u').hidden=data['numbers'].includes('?');
+    document.querySelector('#e14').play()
+  }
+  if (range[0]<data.range[0]) {
+
+    if (range[0]*0==0) {
+      console.log([data.numbers.length-1,0,1,2,3,4][turn])
+document.querySelector('#joke').innerHTML+='<div>+ '+data['names'][[data.numbers.length-1,0,1,2,3,4][data.turn]]+输入了+data.range[0]+period+'<br>+ '+密码+data.range[0]+和+data.range[1]+之间+'</div>'
+document.querySelector('#joke').scrollTo(0,2000);
+    } range[0]=data.range[0];range[1]=data.range[1];
+      document.querySelector('#g').innerHTML=轮到+data.names[data.turn]+了
+     document.querySelector("#inputArea").hidden=1;
+    document.querySelector('#createButton1').hidden=1;document.querySelector('#createButton1').disabled=0
+    document.querySelector('#se').value='';
+    document.querySelector('#lower').innerHTML='';document.querySelector('#upper').innerHTML=''
+    document.querySelector('#u').hidden=data['numbers'].includes('?');
+      document.querySelector('#e14').play()
+    
+  }
+}
+function myturn() {
+  document.querySelector('#maingame').hidden=0;
+    document.querySelector('#e14').play()
+    if (range[1]>data.range[1]) {
+        timer()
+     
+    if (range[1]*0==0) {
+      console.log([data.numbers.length-1,0,1,2,3,4][turn])
+document.querySelector('#joke').innerHTML+='<div>+ '+data['names'][[data.numbers.length-1,0,1,2,3,4][data.turn]]+输入了+data.range[1]+period+'<br>+ '+密码+data.range[0]+和+data.range[1]+之间+'</div>'
+document.querySelector('#joke').scrollTo(0,2000);
+    }
+    range[0]=data.range[0];range[1]=data.range[1];s0=setInterval(timer,60);
+    console.info(s0)
+     document.querySelector("#inputArea").hidden=0;
+    document.querySelector('#createButton1').hidden=0
+    document.querySelector('#lower').innerHTML=range[0]+'&lt;';document.querySelector('#upper').innerHTML='&lt;'+range[1];
+    document.querySelector('#u').hidden=0;
+    document.querySelector('#createButton1').disabled=0;
+  }
+  if (range[0]<data.range[0]) {
+       timer()
+
+    if (range[0]*0==0) {
+      console.log([data.numbers.length-1,0,1,2,3,4][turn])
+document.querySelector('#joke').innerHTML+='<div>+ '+data['names'][[data.numbers.length-1,0,1,2,3,4][data.turn]]+输入了+data.range[0]+period+'<br>+ '+密码+data.range[0]+和+data.range[1]+之间+'</div>'
+document.querySelector('#joke').scrollTo(0,2000);
+    }s0=setInterval(timer,60);
+    console.info(s0)
+    range[0]=data.range[0];range[1]=data.range[1];
+    document.querySelector("#inputArea").hidden=0;
+    document.querySelector('#createButton1').hidden=0
+    document.querySelector('#lower').innerHTML=range[0]+'&lt;';document.querySelector('#upper').innerHTML='&lt;'+range[1];
+    document.querySelector('#u').hidden=0;
+    document.querySelector('#createButton1').disabled=0;
+  }
+  
+}
+if (navigator.language=='zh-TW') {
+var 設定名稱='設定名稱';var win='你贏了';var loss='你輸了';
+;
+var 為了='為了產生密碼，請先輸入一個數字：'
+   var 请在='請在'
+   var 秒='秒内輸入數字：'
+   var 範圍='輸入值超出範圍'
+    document.querySelector('#ok').innerHTML='確定'
+   var 整数='只能輸入整數'
+   var 遊戲='遊戲結束'
+var 轮到='輪到'
+var 了='了'
+var 等待='等待其他玩家完成輸入'
+var 由于='由於密碼剛好為0，因此必須重新設定。'
+var 输入了='輸入了'
+var 密码='密碼在'
+var 和='和'
+var 之间='之間。'
+var 超时='未在時限內完成輸入，因此輸掉遊戲。'
+var 是密码='密碼為';var period='。'
+var 可选='只剩下一個數字可選，因此輸掉遊戲。'
+var 若为='（輸入的數字若為密碼，即輸掉遊戲）'
+var 接下='（接下來不會再輪到你了）'
+var inplay='您已經在進行遊戲了'
+var 总和='總和為'
+var pleasewait='請稍候...';var 滿='目前人數已滿';var 已有='已有';var 人='人參加<br>（';var 開始='秒後開始遊戲）'
+}
+else if (navigator.language=='zh-CN' || navigator.language=='zh'){
+var 設定名稱='设定名称';var win='你赢了';var loss='你输了';var 超时='未在时限内完成输入，因此输掉游戏。'
+   document.querySelector('#ok').innerHTML='确定'
+  var 為了='为了产生密码，请先输入一个数字：';
+  document.querySelector('#rolldice').innerHTML='<span class="btn-icon">＊</span>开始游戏';
+    var 总和='总和为'
+    document.querySelector('#joker').innerHTML='<b></b>（密码为总和的末两位）'
+    var 若为='（输入的数字若为密码，即输掉游戏）'
+    var 接下='（接下来不会再轮到你了）'
+     var 请在='请在'
+     var 遊戲='游戏结束'
+   var 秒='秒内输入数字：'
+   var 範圍='输入值超出范围'
+   var 整数='只能输入整数'
+var 轮到='轮到'
+var 了='了'
+var 等待='等待其他玩家完成输入'
+var 由于='由于密码刚好为0，因此必须重新设定。'
+var 输入了='输入了'
+var 密码='密码在'
+var 和='和'
+var 之间='之间。'
+var inplay='您已经在进行游戏了'
+var 是密码='密码为';var period='。'
+var 可选='只剩下一个数字可选，因此输掉游戏。'
+document.querySelector("h1").innerHTML='终极密码'
+var pleasewait='请稍候...';var 滿='目前人数已满'
+var 已有='已有';var 人='人参加<br>（';var 開始='秒之后开始游戏）'
+}
+else {
+   var 遊戲='GAME OVER'
+  var 滿='The number of players has reached the limit.'
+  var 設定名稱='Enter your name:';var loss='You lose';document.querySelector('#rolldice').innerHTML='<span class="btn-icon">＊</span>Play';
+ var 為了='In order to generate the password, please input a number first:';
+
+    document.querySelector(" h1").innerHTML='Number Bomb'
+
+    document.querySelector('#joker').innerHTML='<b></b>(The password is the last two digits of the sum.)'
+var 若为='(If you input the password, then you\'ll lose the game.)'
+    var 接下='(You have no more turns.)'
+     var 请在='Please input a number within '
+   var 秒=' seconds.'
+   var 範圍='The input value is out of range.'
+   var 整数='Only integers are allowed.'
+var 轮到='It\'s '
+var 了='\'s turn!'
+var 開始=' seconds.)'
+var 等待='Waiting for other players.'
+var 由于='The password needs to be regenerated because its value equals 0.'
+var 输入了=' entered '
+var 密码='The password is between '
+var 和=' and '
+var 之间='.'
+var 超时=' ran out of time and loses the game.'
+var inplay='You are already playing the game.'
+var 是密码='The password is ';var period='.'
+var 总和='The sum is '
+var 可选=' loses the game since the range contains only 1 number.'
+var pleasewait='please wait...'
+   document.querySelector('#ok').innerHTML='OK'
+}
+if (getCookie('key')>0) {
+document.querySelector("#rolldice").hidden=false;
+if (''==getCookie('name')) {
+  document.cookie='name='+getCookie('key').substring(12)+';Max-Age=10000000';
+}else{
+document.cookie='name='+getCookie('name')+';Max-Age=10000000';}
+document.cookie='key='+getCookie('key')+';Max-Age=10000000';
+document.querySelector("#nam").innerHTML=getCookie('name')
+}
+else {let sign = prompt(設定名稱);
+
+
+if (sign!=null) {
+document.cookie='key='+Math.floor(10**15*Math.random());
+document.cookie='name='+sign;
+  window.location.reload();
+}
+}
+document.querySelector('#createButton1').onclick =function(){
+
+
+if (data.chance<10) {
+  if (document.querySelector('#se').value%1==0){
+    update1(Number(document.querySelector('#se').value))
+}else{
+  alert(整数)
+}
+}else{
+  if (document.querySelector('#se').value%1==0){
+    if (document.querySelector('#se').value<range[1]&&document.querySelector('#se').value>range[0])
+   { update(Number(document.querySelector('#se').value))}else{alert(範圍)}
+}else{
+  alert(整数)
+}
+}}
+document.querySelector('#rolldice').onclick = function () {
+  
+  document.querySelector("#rolldice").disabled=1;rolldice(getCookie('name'),Number(getCookie('key')));}
+
+</script>
+</body>
+</html>
