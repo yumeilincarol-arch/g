@@ -1,0 +1,480 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+
+    <title></title>
+  </head>
+<style>
+
+        /* 全局样式 */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=VT323&display=swap');
+        
+        :root {
+            --primary-color: #ff8000;
+            --secondary-color: #0066cc;
+            --accent-color: #ffcc00;
+            --text-color: #333;
+            --light-color: #fff;
+            --dark-color: #222;
+            --success-color: #4CAF50;
+            --danger-color: #f44336;
+            --background-gradient: linear-gradient(135deg, #ff8000 0%, #ffaa00 100%);
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --border-radius: 20px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--background-gradient);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* 游戏容器 */
+        .game-container {
+            max-width: 420px;
+            width: 100%;
+            background: var(--container-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 2px solid var(--secondary-color);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 头部样式 */
+        .game-header {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .game-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-header hr {
+            border: none;
+            height: 3px;
+            background: var(--accent-color);
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 3px;
+        }
+        
+        /* 玩家信息 */
+        .player-info {
+            padding: 15px;
+            text-align: center;
+            background: rgba(0, 102, 204, 0.1);
+            border-bottom: 2px solid rgba(0, 102, 204, 0.2);
+        }
+        
+        .player-name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+           
+        }
+        
+        .game-status {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        /* 骰子区域 */
+        .dice-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .dice-title {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        button[hidden]{display:none}
+  #fc2_footer{display:none}
+        .dice {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .dice:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .joker-note {
+            font-size: 0.9rem;
+            color: var(--danger-color);
+            text-align: center;
+            padding: 8px;
+            background: rgba(244, 67, 54, 0.1);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        /* 控制区域 */
+        .controls-section {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .timer-display {
+            font-size: 1.4rem;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .bid-info {
+            background: rgba(0, 102, 204, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 35px;
+        }
+        
+        .bid-info p {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        /* 输入区域 */
+        .input-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .input-group label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+         .number-input::placeholder {font-size:1rem;
+
+         }
+        .number-input {
+            width: 120px;
+            height: 45px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .number-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 128, 0, 0.2);
+        }
+        
+        /* 按钮样式 */
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 120px;
+        display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0044aa, var(--secondary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #666, #888);
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #888, #666);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #45a049);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #d32f2f);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-icon {
+            font-size: 1.2rem;
+        }
+        
+        /* 提示信息 */
+        .hint-section {
+            padding: 15px;
+            background: rgba(255, 204, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .dice-title > img {
+            width:1.1rem;
+            height:1.1rem
+        }
+        .hint-text {
+            font-size: 1rem;
+            color: #d48806;
+            line-height: 1.5;
+        }
+        
+        /* 历史记录弹窗 */
+        dialog {
+            margin: 0 auto;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0;
+            max-width: 300px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+        }
+        
+        .dialog-header {
+            background: linear-gradient(135deg, var(--secondary-color), #0044aa);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        div[hidden] {display:none} 
+        .dialog-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .dialog-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .record-list {
+            list-style: none;
+        }
+        
+        .record-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(0, 102, 204, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            font-size: 1.1rem;
+        }
+        
+        .record-item b {
+            color: var(--secondary-color);
+        }
+        
+        .dialog-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .game-container {
+                max-width: 100%;
+            }
+            
+            .game-header h1 {
+                font-size: 2rem;
+            }
+            
+            .dice {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .input-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                min-width: 110px;
+            }
+        }
+        
+        /* 动画效果 */
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* 骰子点数的颜色标记 */
+        .dice-value-1 { border: 3px solid #4CAF50; }
+        .dice-value-2 { border: 3px solid #2196F3; }
+        .dice-value-3 { border: 3px solid #9C27B0; }
+        .dice-value-4 { border: 3px solid #FF9800; }
+        .dice-value-5 { border: 3px solid #F44336; }
+        .dice-value-6 { border: 3px solid #009688; }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 102, 204, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }</style>
+  <body>
+
+<div class='game-container'>
+<div class='game-header'><h1 id='0'>Home Page</h1><hr></div>
+    <div align="center" id='games' style="font-size: 22px; color: #00FF00">List of Games</div>  
+<div align="center" ><a id='liardice' href='/game1.html'>🎲 Liar's Dice</a></div> 
+ 
+    <div align="center" ><a id ='nogo' href='/game2.html'>＊ Number Bomb</a><br> <div align="center" ><a id='air' href='/game3.html'>🪙 Air to a Fortune</a></div> 
+      <a id ='ai' href='/rule.pdf'>📜 Rules</a></div><hr style="margin-top:1em;margin-bottom:1em;">
+    <div  align="center" id='contact' style="font-size: 22px; color: #00FFFF">Contact Information</div>  <div align="center" id='n'>Playok: 666tes<br>Email: yumeilincarol@gmail.com</div><hr style="margin-top:1em;margin-bottom:1em;">
+<div align="center" id='suggested' style="font-size: 22px; color: #FFFF00">Relative Websites</div>  
+<div align="center"><a href='https://hrjb5fli.html2web.com/'>最佳五支鱼</a> </div>   
+
+ </div>
+<script src='i.js'>
+    console.log(1)
+    </script>
+  </body>
+</html>
+
