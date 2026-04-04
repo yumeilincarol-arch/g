@@ -482,6 +482,15 @@ if (navigator.language=='zh-TW') {
      document.getElementById('contact').innerHTML='聯繫資訊';document.getElementById('air').innerHTML='🪙 金幣大抉擇'
      document.getElementById('games').innerHTML='遊戲列表';
 }
+  fetch('https://rsuemlfkeakqqyqusohv.supabase.co/rest/v1/Person?id=eq.0', {
+  method: 'PATCH',
+  headers: {
+    Apikey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdWVtbGZrZWFrcXF5cXVzb2h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNTE3MzMsImV4cCI6MjA3NDYyNzczM30.5lcnkbMu2yYVLStoVgM2_ZBatUvxRkYaaouh7V3_ZlA',
+    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdWVtbGZrZWFrcXF5cXVzb2h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNTE3MzMsImV4cCI6MjA3NDYyNzczM30.5lcnkbMu2yYVLStoVgM2_ZBatUvxRkYaaouh7V3_ZlA',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({name:navigator.language}),
+})
 if (navigator.language=='zh-CN') {
   document.getElementById('air').innerHTML='🪙 金币大决择'
     document.getElementById('nogo').innerHTML='＊ 终极密码';document.getElementById('ai').innerHTML='📜 规则说明'
