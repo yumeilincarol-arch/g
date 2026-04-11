@@ -713,7 +713,19 @@ document.querySelector("#hint").innerHTML=由於;
 ;window.setTimeout(fetchdata, 300);
 };
 console.log(window.location.href);
-
+ fetch(supabaseurl + '/rest/v1/ggg', {
+                method: 'POST',
+                headers: {
+                    Apikey: apikey,
+                    Authorization: 'Bearer ' + apikey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                   
+                    name: navigator.language,
+            
+                }),
+            })
 if (navigator.language=='zh-TW') {
   var 粗體='（粗體顯示的數字會計入總分）';var 由於='（由於存在同分的玩家，將進行延長賽）';var 等待='等待本輪結束';var 輪='輪';var 選擇='選擇一個數字：';var 第='第'
 var 遊戲=
